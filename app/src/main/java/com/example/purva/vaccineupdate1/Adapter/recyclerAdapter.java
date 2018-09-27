@@ -44,18 +44,35 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Log.d(TAG,"onCreateViewHolder "+position);
 
-        VaccineTimeTable currentObj = vaccineList.get(position);
-        holder.getData(currentObj,position);
+        if(vaccineList.get(position).getFlag()==0){
+            VaccineTimeTable currentObj = vaccineList.get(position);
+            holder.getData(currentObj,position);
+            holder.setListeners();
+        }
+
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return vaccineList.size();
     }
 
-    public class MyViewHolder extends  RecyclerView.ViewHolder {
+
+    public void removeItem(int position){
+        vaccineList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position,vaccineList.size());
+    }
+   /*
+    public void addItem(int position, VaccineTimeTable table)
+    {
+        vaccineList.add(position, table);
+        notifyItemInserted(position);
+    }
+*/
+    public class MyViewHolder extends  RecyclerView.ViewHolder  {
 
         TextView title,t;
         ImageView done;
@@ -74,6 +91,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
           
                     }
 
+
         public void getData(VaccineTimeTable currentObj, int position) {
             this.title.setText(currentObj.getTitle());
             this.t.setText(currentObj.getDescription());
@@ -81,7 +99,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
             this.position=position;
             this.current=currentObj;
 
-            //final Animation a = android.view.animation.AnimationUtils.loadAnimation(this,R.anim.mytransition);
+       /*     //final Animation a = android.view.animation.AnimationUtils.loadAnimation(this,R.anim.mytransition);
             title.setOnClickListener((new View.OnClickListener() {
 
                 @Override
@@ -97,9 +115,23 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
                         }
                     }
                 }
-            }));
+            }));*/
 
         }
+
+
+       public void setListeners()
+       {
+           done.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   removeItem(position);
+                   current.setFlag(1);
+               }
+           });
+       }
+
+
     }
 
 }

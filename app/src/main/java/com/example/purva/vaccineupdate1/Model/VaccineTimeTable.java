@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 public class VaccineTimeTable {
 
+
     private String title;
-    private int image;
+    private int image,flag;
     private String description;
 
 /*
@@ -16,7 +17,16 @@ public class VaccineTimeTable {
        Date date = new Date();
         return date;
     }*/
-        public void setTitle(String title) {
+public void setFlag(int flag1)
+{
+    this.flag=flag1;
+}
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setTitle(String title) {
         this.title = title;
     }
 //getter and setter
@@ -50,6 +60,7 @@ public class VaccineTimeTable {
             int images = getImages();
             VaccineTimeTable table = new VaccineTimeTable();
             table.setImage(images);
+            table.setFlag(0);
             table.setTitle("Vaccine "+ i);
             table.setDescription("Description "+i);
             datalist.add(table);

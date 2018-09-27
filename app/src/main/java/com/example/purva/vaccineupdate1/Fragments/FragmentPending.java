@@ -14,6 +14,8 @@ import com.example.purva.vaccineupdate1.Adapter.recyclerAdapter;
 import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.example.purva.vaccineupdate1.R;
 
+import java.util.ArrayList;
+
 public class FragmentPending extends Fragment {
 
 
