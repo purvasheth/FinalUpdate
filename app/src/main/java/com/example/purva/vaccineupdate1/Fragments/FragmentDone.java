@@ -2,10 +2,15 @@ package com.example.purva.vaccineupdate1.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.purva.vaccineupdate1.Adapter.recyclerAdapter;
+import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.example.purva.vaccineupdate1.R;
 
 public class FragmentDone extends Fragment {
@@ -23,7 +28,14 @@ public class FragmentDone extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_done, container, false);
+        RecyclerView recyclerView = new RecyclerView(getContext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new recyclerAdapter(getContext(), VaccineTimeTable.getdata()));
+
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        return recyclerView;
     }
 
 }

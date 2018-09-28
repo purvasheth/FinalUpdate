@@ -8,7 +8,8 @@ public class VaccineTimeTable {
 
 
     private String title;
-    private int image,flag;
+    private int image;
+    boolean flag;
     private String description;
 
 /*
@@ -17,12 +18,12 @@ public class VaccineTimeTable {
        Date date = new Date();
         return date;
     }*/
-public void setFlag(int flag1)
+public void setFlag(boolean flag1)
 {
     this.flag=flag1;
 }
 
-    public int getFlag() {
+    public boolean getFlag() {
         return flag;
     }
 
@@ -57,21 +58,32 @@ public void setFlag(int flag1)
         ArrayList<VaccineTimeTable> datalist = new ArrayList<>();
         for(int i=0;i<10;i++)
         {
-            int images = getImages();
+
             VaccineTimeTable table = new VaccineTimeTable();
-            table.setImage(images);
-            table.setFlag(0);
+            table.setFlag(true);
             table.setTitle("Vaccine "+ i);
             table.setDescription("Description "+i);
             datalist.add(table);
+            int images = getImages(table.getFlag());
+            table.setImage(images);
         }
         return datalist;
     }
 
 
-    public static int getImages()
+    public static int getImages(boolean flag)
     {
-        int images = R.drawable.baseline_done_black_18;
-        return images;
+        int imagesUndo = R.drawable.baseline_undo_black_18dp;
+        int imagesDone = R.drawable.baseline_done_black_18;
+        if(!flag)
+        {
+            return imagesDone;
+        }
+        else
+        {
+            return imagesUndo;
+        }
+
+
     }
 }

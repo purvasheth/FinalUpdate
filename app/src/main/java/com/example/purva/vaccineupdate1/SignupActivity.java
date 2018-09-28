@@ -1,18 +1,28 @@
 package com.example.purva.vaccineupdate1;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SignupActivity extends AppCompatActivity {
+import java.util.Calendar;
+
+public class SignupActivity extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemSelectedListener  {
     private EditText _nameText;
+    private EditText _childnameText;
+    private EditText _childdobText;
     private EditText _addressText;
     private EditText _emailText;
     private EditText _mobileText;
@@ -20,7 +30,10 @@ public class SignupActivity extends AppCompatActivity {
     private EditText _reEnterPasswordText;
     private Button _signupButton;
     private TextView _loginLink;
-
+    private int mYear, mMonth, mDay;
+    private Spinner spinner;
+    private static final String[] paths = {"Guardian", "Father", "Mother"};
+    String childAssoc="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +43,30 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton=findViewById(R.id.btn_signup);
         _reEnterPasswordText=findViewById(R.id.input_reEnterPassword);
         _nameText=(EditText)findViewById(R.id.input_name);
+        _childnameText=(EditText)findViewById(R.id.input_childname);
+        _childdobText=(EditText)findViewById(R.id.input_dob);
+        _nameText=(EditText)findViewById(R.id.input_name);
         _passwordText=findViewById(R.id.input_password);
         _addressText=(EditText)findViewById(R.id.input_address);
         _emailText=findViewById(R.id.input_email);
         _mobileText = findViewById(R.id.input_mobile);
+        //for drop down
+        spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(SignupActivity.this,
+                android.R.layout.simple_spinner_item, paths);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signup();
             }
         });
+        _childdobText.setOnClickListener(this);
+        _childdobText.setInputType(InputType.TYPE_NULL);
+
         _loginLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,14 +90,33 @@ public class SignupActivity extends AppCompatActivity {
     }
     public boolean validate() {
         boolean valid = true;
-
         String name = _nameText.getText().toString();
+        String childName = _childnameText.getText().toString();
+        String childDOB = _childdobText.getText().toString();
         String address = _addressText.getText().toString();
         String email = _emailText.getText().toString();
         String mobile = _mobileText.getText().toString();
         String password = _passwordText.getText().toString();
         String reEnterPassword = _reEnterPasswordText.getText().toString();
 
+        if (name.isEmpty() || name.length() < 3) {
+            _nameText.setError("at least 3 characters");
+            valid = false;
+        } else {
+            _nameText.setError(null);
+        }
+        if (childName.isEmpty() || name.length() < 3) {
+            _nameText.setError("at least 3 characters");
+            valid = false;
+        } else {
+            _nameText.setError(null);
+        }
+        if (childDOB.isEmpty() || name.length() < 3) {
+            _nameText.setError("select Date of Birth of Child");
+            valid = false;
+        } else {
+            _nameText.setError(null);
+        }
         if (name.isEmpty() || name.length() < 3) {
             _nameText.setError("at least 3 characters");
             valid = false;
@@ -113,6 +159,11 @@ public class SignupActivity extends AppCompatActivity {
         } else {
             _reEnterPasswordText.setError(null);
         }
+        if (childAssoc=="") {
+            childAssoc="Guardian";
+            valid = false;
+        }
+
 
         return valid;
     }
@@ -133,12 +184,14 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.show();
 
         String name = _nameText.getText().toString();
+        String childName = _childnameText.getText().toString();
+        String childDOB = _childdobText.getText().toString();
         String address = _addressText.getText().toString();
         String email = _emailText.getText().toString();
         String mobile = _mobileText.getText().toString();
         String password = _passwordText.getText().toString();
         String reEnterPassword = _reEnterPasswordText.getText().toString();
-
+        String childAssociation = childAssoc;
         // TODO: Implement your own signup logic here.
 
         new android.os.Handler().postDelayed(
@@ -153,4 +206,45 @@ public class SignupActivity extends AppCompatActivity {
                 }, 3000);
     }
 
+    @Override
+    public void onClick(View v) {
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+
+                        _childdobText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (position) {
+            case 0:
+                childAssoc = "Guardian";
+                break;
+            case 1:
+                childAssoc = "Mother";
+                break;
+            case 2:
+                childAssoc = "Father";
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+            childAssoc ="Guardian";
+    }
 }

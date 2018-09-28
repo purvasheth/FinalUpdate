@@ -24,6 +24,8 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
     private List<VaccineTimeTable> vaccineList;
     private LayoutInflater inflater;
     Context context;
+    int mExpandedPosition = RecyclerView.NO_POSITION;
+    private RecyclerView recyclerView = null;
 
     public recyclerAdapter(Context context, List<VaccineTimeTable> myVaccineList)
     {
@@ -32,6 +34,12 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
         this.inflater = LayoutInflater.from(context);
     }
 
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView)
+    {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
+    }
 
     @NonNull
     @Override
@@ -43,13 +51,29 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
-        if(vaccineList.get(position).getFlag()==0){
+
+        final boolean isExpanded = position == mExpandedPosition;
+
             VaccineTimeTable currentObj = vaccineList.get(position);
             holder.getData(currentObj,position);
             holder.setListeners();
-        }
+
+           holder.t.setVisibility(isExpanded? View.VISIBLE:View.GONE);
+           holder.itemView.setActivated(isExpanded);
+           holder.itemView.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   mExpandedPosition = isExpanded? RecyclerView.NO_POSITION:position;
+
+                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                       TransitionManager.beginDelayedTransition(recyclerView);
+                   }
+                   notifyItemChanged(position);
+               }
+           });
+
 
     }
 
@@ -99,23 +123,6 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
             this.position=position;
             this.current=currentObj;
 
-       /*     //final Animation a = android.view.animation.AnimationUtils.loadAnimation(this,R.anim.mytransition);
-            title.setOnClickListener((new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        TransitionManager.beginDelayedTransition(vg);
-                        if(t.getVisibility()==View.GONE){
-                            t.setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
-                            t.setVisibility(View.GONE);
-                        }
-                    }
-                }
-            }));*/
 
         }
 
@@ -126,7 +133,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
                @Override
                public void onClick(View v) {
                    removeItem(position);
-                   current.setFlag(1);
+                   current.setFlag(true);
                }
            });
        }
