@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "640905941647",
+    "firebase_url": "https://sdl-project-main.firebaseio.com",
+    "project_id": "sdl-project-main",
+    "storage_bucket": "sdl-project-main.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640905941647:android:529b03b22eff4c08",
+        "android_client_info": {
+          "package_name": "com.example.purva.vaccineupdate1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640905941647-hql9of0g2pqt98ji39au1omlh2fib9q4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnDNyqNR28dxfW9qylOIkBNYs0duCxkc0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

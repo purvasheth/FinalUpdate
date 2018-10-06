@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -94,6 +96,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_calendar) {
 
         } else if (id == R.id.nav_settings) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_info) {
 
