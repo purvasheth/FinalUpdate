@@ -61,12 +61,12 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/doneVaccine"
+                    android:id="@+id/undoVaccine"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_margin="7dp"
                     android:contentDescription="@string/done"
-                    android:src="@drawable/baseline_done_black_18"
+                    android:src="@drawable/baseline_undo_black_18dp"
                     android:clickable="true"
                     />
 

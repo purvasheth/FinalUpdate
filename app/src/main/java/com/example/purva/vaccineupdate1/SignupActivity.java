@@ -77,6 +77,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         //mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
+        mDatabase.setPersistenceEnabled(false);
         mDatabaseRef = mDatabase.getReference();
 
         setContentView(R.layout.activity_signup);
@@ -129,6 +130,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        // Disable going back to the MainActivity
+        moveTaskToBack(true);
+    }
+
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -136,6 +143,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Sign up failed", Toast.LENGTH_LONG).show();
+
 
         _signupButton.setEnabled(true);
     }
@@ -197,8 +205,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             _mobileText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
+            _passwordText.setError("between 6 and 10 alphanumeric characters");
             valid = false;
         } else {
             _passwordText.setError(null);

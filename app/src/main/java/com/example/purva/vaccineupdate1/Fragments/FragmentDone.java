@@ -1,8 +1,11 @@
 package com.example.purva.vaccineupdate1.Fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,10 +13,25 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.purva.vaccineupdate1.Adapter.recyclerAdapter;
+import com.example.purva.vaccineupdate1.Adapter.recyclerAdapterDone;
 import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.example.purva.vaccineupdate1.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentDone extends Fragment {
+
+    List<VaccineTimeTable> listDataDone;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    ProgressDialog progressDialog;
 
     public static FragmentDone newInstance() {
         FragmentDone fragment = new FragmentDone();
@@ -23,19 +41,56 @@ public class FragmentDone extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        listDataDone = new ArrayList<>();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        getFirebaseDatabase();
+    }
+
+    public void getFirebaseDatabase(){
+
+        databaseReference = firebaseDatabase.getReference("users");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot vaccineSnapshot = dataSnapshot.child(FirebaseAuth.getInstance().getUid()).child("vaccineList");
+                for (DataSnapshot ds : vaccineSnapshot.getChildren()) {
+                    VaccineTimeTable info = new VaccineTimeTable();
+                    if (ds.getValue(VaccineTimeTable.class).isFlag() == true) {
+
+                        info.setFlag(ds.getValue(VaccineTimeTable.class).isFlag());
+                        info.setAfter(ds.getValue(VaccineTimeTable.class).getAfter());
+                        info.setCost(ds.getValue(VaccineTimeTable.class).getCost());
+                        info.setVac_name(ds.getValue(VaccineTimeTable.class).getVac_name());
+                        listDataDone.add(info);
+                    }
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                progressDialog.dismiss();
+            }
+
+        });
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        RecyclerView recyclerView = new RecyclerView(getContext());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new recyclerAdapter(getContext(), VaccineTimeTable.getdata()));
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        RecyclerView recyclerViewDone = new RecyclerView(getContext());
 
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDone.setHasFixedSize(true);
+        recyclerViewDone.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewDone.setAdapter(new recyclerAdapterDone(getContext(), listDataDone ));
+        recyclerViewDone.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDone.addItemDecoration(new DividerItemDecoration(getContext(),LinearLayoutManager.VERTICAL));
 
-        return recyclerView;
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading Data...");
+        progressDialog.show();
+
+        return recyclerViewDone;
     }
-
 }

@@ -1,24 +1,21 @@
 package com.example.purva.vaccineupdate1.Adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import com.example.purva.vaccineupdate1.Fragments.FragmentDone;
 import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.example.purva.vaccineupdate1.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,15 +29,15 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyViewHolder>{
+public class recyclerAdapterDone extends RecyclerView.Adapter<recyclerAdapterDone.MyViewHolder>{
 
     private List<VaccineTimeTable> vaccineList;
     private LayoutInflater inflater;
     Context context;
     int mExpandedPosition = RecyclerView.NO_POSITION;
-    private RecyclerView recyclerView = null;
+    private RecyclerView recyclerViewDone = null;
 
-    public recyclerAdapter(Context context, List<VaccineTimeTable> myVaccineList)
+    public recyclerAdapterDone(Context context, List<VaccineTimeTable> myVaccineList)
     {
         this.context = context;
         this.vaccineList = myVaccineList;
@@ -50,15 +47,15 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
+        this.recyclerViewDone = recyclerView;
     }
 
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //Log.d(TAG,"onCreateViewHolder");
-        View view = inflater.inflate(R.layout.list_item,parent,false);
+        Log.d(TAG,"onCreateViewHolder");
+        View view = inflater.inflate(R.layout.list_item_done,parent,false);
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
@@ -66,7 +63,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
 
-        Log.d(TAG,"onBindViewHolder "+position);
+        Log.d(TAG,"onCreateViewHolder "+position);
 
         final boolean isExpanded = position==mExpandedPosition;
 
@@ -74,7 +71,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
         holder.getData(currentObj,position);
 
         holder.description.setVisibility(isExpanded?View.VISIBLE:View.GONE);
-   //     holder.vac_name.setSelected(true);
+        //     holder.vac_name.setSelected(true);
         holder.vac_name.setActivated(isExpanded);
         holder.vac_name.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +79,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
 
                 mExpandedPosition = isExpanded ? RecyclerView.NO_POSITION:position;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    TransitionManager.beginDelayedTransition(recyclerView);
+                    TransitionManager.beginDelayedTransition(recyclerViewDone);
                 }
                 notifyItemChanged(position);
             }
@@ -117,14 +114,14 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
             after = (TextView) itemView.findViewById(R.id.after);
             cost = (TextView) itemView.findViewById(R.id.cost);
             vac_name = (TextView) itemView.findViewById(R.id.VaccineName);
-            done = (ImageView) itemView.findViewById(R.id.doneVaccine);
+            done = (ImageView) itemView.findViewById(R.id.undoVaccine);
         }
 
         public void getData(VaccineTimeTable currentObj, int position) {
             this.vac_name.setText(currentObj.getVac_name());
             this.after.setText(currentObj.getAfter());
             this.cost.setText(currentObj.getCost());
-            this.done.setImageResource(currentObj.getImage());
+            this.done.setImageResource(currentObj.getImageUndo());
             this.position=position;
             this.current=currentObj;
 
@@ -135,33 +132,54 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
             done.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                    final DatabaseReference databaseReference = firebaseDatabase.getReference("users");
 
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            DataSnapshot vaccineSnapshot = dataSnapshot.child(FirebaseAuth.getInstance().getUid()).child("vaccineList");
-                            for (DataSnapshot ds : vaccineSnapshot.getChildren()) {
-                                if (ds.getValue(VaccineTimeTable.class).getVac_name() == vaccineList.get(position).getVac_name()) {
-                                    System.out.println(vaccineList.get(position).getVac_name());
-                                    System.out.println(position);
-                                    databaseReference.child(FirebaseAuth.getInstance().getUid()).child("vaccineList").child(ds.getKey()).child("flag").setValue(true);
+
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(context);
+                    }
+                    builder.setTitle("Delete entry")
+                            .setMessage("Are you sure you want to delete this entry?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                    final DatabaseReference databaseReference = firebaseDatabase.getReference("users");
+
+                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            DataSnapshot vaccineSnapshot = dataSnapshot.child(FirebaseAuth.getInstance().getUid()).child("vaccineList");
+                                            for (DataSnapshot ds : vaccineSnapshot.getChildren()) {
+                                                if (ds.getValue(VaccineTimeTable.class).getVac_name() == vaccineList.get(position).getVac_name()) {
+                                                    databaseReference.child(FirebaseAuth.getInstance().getUid()).child("vaccineList").child(ds.getKey()).child("flag").setValue(false);
+                                                }
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+
+
+                                    });
                                 }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
 
-                            }
-                        }
 
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-
-                    });
-                    removeItem(position);
+                  //  removeItem(position);
                 }
             });
         }
@@ -169,5 +187,3 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
     }
 
 }
-
-

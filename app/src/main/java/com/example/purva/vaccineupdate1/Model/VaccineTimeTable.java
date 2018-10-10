@@ -1,89 +1,59 @@
 package com.example.purva.vaccineupdate1.Model;
 
-import com.example.purva.vaccineupdate1.R;
 
-import java.util.ArrayList;
+import com.example.purva.vaccineupdate1.R;
 
 public class VaccineTimeTable {
 
-
-    private String title;
+    private String cost;
+    private String vac_name;
+    private String after;
+    private boolean flag;
     private int image;
-    boolean flag;
-    private String description;
 
-/*
-    public static Date valueOf (String s)
-    {
-       Date date = new Date();
-        return date;
-    }*/
-public void setFlag(boolean flag1)
-{
-    this.flag=flag1;
-}
+    public String getCost() {
+        return cost;
+    }
 
-    public boolean getFlag() {
+    public void setCost(String cost) {
+        this.cost = cost;
+    }
+
+    public String getVac_name() {
+        return vac_name;
+    }
+
+    public void setVac_name(String vac_name) {
+        this.vac_name = vac_name;
+    }
+
+    public String getAfter() {
+        return after;
+    }
+
+    public void setAfter(String after) {
+        this.after = after;
+    }
+
+    public boolean isFlag() {
         return flag;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-//getter and setter
-    public String getDescription()
-    {
-        return description;
-    }
-    public void setDescription(String description)
-    {
-        this.description=description;
-    }
-    public void setImage(int image)
-    {
-        this.image = image;
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
 
-    public int getImage()
-    {
+    public int getImage() {
+        int image = R.drawable.baseline_done_black_18;
         return image;
     }
-    public String getTitle()
-    {
-        return title;
+
+    public int getImageUndo() {
+        int image = R.drawable.baseline_undo_black_18dp;
+        return image;
     }
 
-    public static ArrayList<VaccineTimeTable> getdata(){
-
-        ArrayList<VaccineTimeTable> datalist = new ArrayList<>();
-        for(int i=0;i<10;i++)
-        {
-
-            VaccineTimeTable table = new VaccineTimeTable();
-            table.setFlag(true);
-            table.setTitle("Vaccine "+ i);
-            table.setDescription("Description "+i);
-            datalist.add(table);
-            int images = getImages(table.getFlag());
-            table.setImage(images);
-        }
-        return datalist;
-    }
-
-
-    public static int getImages(boolean flag)
-    {
-        int imagesUndo = R.drawable.baseline_undo_black_18dp;
-        int imagesDone = R.drawable.baseline_done_black_18;
-        if(!flag)
-        {
-            return imagesDone;
-        }
-        else
-        {
-            return imagesUndo;
-        }
-
-
+    public void setImage(int image) {
+        this.image = image;
     }
 }
