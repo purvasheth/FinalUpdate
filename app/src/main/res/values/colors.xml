@@ -8,5 +8,7 @@
     <color name="colorSecondaryDark">#F29F42</color>
     <color name="colorRipple">@color/colorSecondary</color>
     <color name="colorControlHighlight">@color/colorSecondary</color>
+    <color name="white">#FFFFFF</color>
+
 </resources>
 

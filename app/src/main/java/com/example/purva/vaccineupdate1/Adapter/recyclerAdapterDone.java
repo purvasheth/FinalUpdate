@@ -1,9 +1,15 @@
 package com.example.purva.vaccineupdate1.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
@@ -16,8 +22,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.example.purva.vaccineupdate1.Fragments.FragmentDone;
 import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.example.purva.vaccineupdate1.R;
+
+import com.example.purva.vaccineupdate1.VaccineLog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +39,9 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class recyclerAdapterDone extends RecyclerView.Adapter<recyclerAdapterDone.MyViewHolder>{
+
+    private FragmentTransaction mFragmentTransaction;
+    private FragmentManager mFragmentManager;
 
     private List<VaccineTimeTable> vaccineList;
     private LayoutInflater inflater;
@@ -142,7 +154,7 @@ public class recyclerAdapterDone extends RecyclerView.Adapter<recyclerAdapterDon
                         builder = new AlertDialog.Builder(context);
                     }
                     builder.setTitle("Delete entry")
-                            .setMessage("Are you sure you want to delete this entry?")
+                            .setMessage("Are you sure you want to set this as Pending?")
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // continue with delete
@@ -161,6 +173,7 @@ public class recyclerAdapterDone extends RecyclerView.Adapter<recyclerAdapterDon
                                             }
                                         }
 
+
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -168,6 +181,10 @@ public class recyclerAdapterDone extends RecyclerView.Adapter<recyclerAdapterDon
 
 
                                     });
+                                    Intent intent = new Intent(context, VaccineLog.class);
+                                    intent.putExtra("key", "value");
+                                    context.startActivity(intent);
+                                    ((Activity)context).finish();
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

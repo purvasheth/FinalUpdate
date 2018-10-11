@@ -2,6 +2,7 @@ package com.example.purva.vaccineupdate1;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -13,18 +14,45 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 
+import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
+
+import java.sql.SQLOutput;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private NavigationView navigationView;
+    private TextView _nameText;
+    private TextView _childnameText;
+    private TextView _childdobText;
+    private TextView _addressText;
+    private TextView _emailText;
+    private TextView _assocText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        _nameText =(TextView)findViewById(R.id.parentName);
+        _addressText=(TextView)findViewById(R.id.getAddress);
+        _emailText=(TextView)findViewById(R.id.mailID);
+        _childdobText=(TextView)findViewById(R.id.dob);
+        _childnameText=(TextView)findViewById(R.id.babyname);
+        _assocText=(TextView)findViewById(R.id.relation);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -35,6 +63,8 @@ public class MainActivity extends AppCompatActivity
         if (user == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+        }else{
+            setupProfile();
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -58,6 +88,8 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
+
+
     }
 
     @Override
@@ -122,5 +154,35 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void setupProfile(){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        final DatabaseReference databaseReference = firebaseDatabase.getReference("users");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot ds = dataSnapshot.child(FirebaseAuth.getInstance().getUid());
+
+                _nameText.setText(ds.child("parentName").getValue(String.class));
+                _childnameText.setText(ds.child("childName").getValue(String.class));
+                _childdobText.setText(ds.child("dob").getValue(String.class));
+                _assocText.setText(ds.child("assoc_with_child").getValue(String.class));
+                _emailText.setText(ds.child("email").getValue(String.class));
+                _addressText.setText(ds.child("address").getValue(String.class));
+
+
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+
     }
 }

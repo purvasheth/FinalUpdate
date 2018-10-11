@@ -77,7 +77,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         //mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        mDatabase.setPersistenceEnabled(false);
+       // mDatabase.setPersistenceEnabled(false);
         mDatabaseRef = mDatabase.getReference();
 
         setContentView(R.layout.activity_signup);
@@ -139,6 +139,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
+
+        Intent newIntent = new Intent(this, LoginActivity.class);
+        this.startActivity(newIntent);
         finish();
     }
     public void onSignupFailed() {
@@ -270,7 +273,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         final String password = _passwordText.getText().toString();
         final String reEnterPassword = _reEnterPasswordText.getText().toString();
         final String childAssociation = childAssoc;
-        final String intial_value_for_all_vaccine_flags = "0";
 
         // TODO: Implement your own signup logic here.
 
@@ -301,19 +303,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                                 mDatabaseRef.child("users").child(currentUser.getUid()).child("assoc_with_child").setValue(childAssociation);
                                 mDatabaseRef.child("users").child(currentUser.getUid()).child("childDOBInMilliseconds").setValue(childDOBInMilliseconds);
                                 mDatabaseRef.child("users").child(currentUser.getUid()).child("token").setValue(global_token);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp1").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp2").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp3").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp4").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp5").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp6").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp7").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp8").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp9").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp10").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp11").setValue(intial_value_for_all_vaccine_flags);
-                                mDatabaseRef.child("users").child(currentUser.getUid()).child("vaccineGrp12").setValue(intial_value_for_all_vaccine_flags);
-                                //mDatabase.setValue(); - update db here.
+                                mDatabaseRef.child("users").child(currentUser.getUid()).child("email").setValue(email);
                             }
 
                         } else {

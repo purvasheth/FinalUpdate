@@ -24,11 +24,11 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mAuth;
 
-
     private EditText _emailText ;
     private EditText _passwordText;
     private Button _loginButton;
     private TextView _signupLink;
+    private FirebaseUser user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,10 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            mAuth.getInstance().signOut();
+        }
     }
 
     public void login() {

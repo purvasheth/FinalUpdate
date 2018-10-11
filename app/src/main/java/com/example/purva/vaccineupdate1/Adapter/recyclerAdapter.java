@@ -1,9 +1,13 @@
 package com.example.purva.vaccineupdate1.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -21,6 +25,7 @@ import android.widget.Toast;
 import com.example.purva.vaccineupdate1.Fragments.FragmentDone;
 import com.example.purva.vaccineupdate1.Model.VaccineTimeTable;
 import com.example.purva.vaccineupdate1.R;
+import com.example.purva.vaccineupdate1.VaccineLog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -135,33 +140,59 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.MyView
             done.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                    final DatabaseReference databaseReference = firebaseDatabase.getReference("users");
 
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            DataSnapshot vaccineSnapshot = dataSnapshot.child(FirebaseAuth.getInstance().getUid()).child("vaccineList");
-                            for (DataSnapshot ds : vaccineSnapshot.getChildren()) {
-                                if (ds.getValue(VaccineTimeTable.class).getVac_name() == vaccineList.get(position).getVac_name()) {
-                                    System.out.println(vaccineList.get(position).getVac_name());
-                                    System.out.println(position);
-                                    databaseReference.child(FirebaseAuth.getInstance().getUid()).child("vaccineList").child(ds.getKey()).child("flag").setValue(true);
+
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(context);
+                    }
+                    builder.setTitle("Delete entry")
+                            .setMessage("Are you sure you want to set this as Done?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                    final DatabaseReference databaseReference = firebaseDatabase.getReference("users");
+
+                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            DataSnapshot vaccineSnapshot = dataSnapshot.child(FirebaseAuth.getInstance().getUid()).child("vaccineList");
+                                            for (DataSnapshot ds : vaccineSnapshot.getChildren()) {
+                                                if (ds.getValue(VaccineTimeTable.class).getVac_name() == vaccineList.get(position).getVac_name()) {
+                                                    databaseReference.child(FirebaseAuth.getInstance().getUid()).child("vaccineList").child(ds.getKey()).child("flag").setValue(true);
+                                                }
+
+                                            }
+                                        }
+
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+
+
+                                    });
+
+                                    Intent intent = new Intent(context, VaccineLog.class);
+                                    context.startActivity(intent);
+                                    ((Activity)context).finish();
                                 }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
 
-                            }
-                        }
 
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-
-                    });
-                    removeItem(position);
+                    //  removeItem(position);
                 }
             });
         }
